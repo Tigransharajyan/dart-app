@@ -1,0 +1,212 @@
+void shoppingListExample() {
+  List<String> shoppingList = ['Bread', 'Milk', 'Eggs'];
+
+  shoppingList.add('Cheese');
+  shoppingList.insert(1, 'Coffee');
+  shoppingList.removeAt(2);
+  shoppingList[0] = 'Chocolate';
+
+  print(shoppingList.first);
+  print(shoppingList.last);
+  print(shoppingList.isEmpty);
+  print(shoppingList);
+}
+
+class Book {
+  String title;
+  String author;
+  int pages;
+
+  Book({
+    required this.title,
+    required this.author,
+    required this.pages,
+  });
+
+  String getInfo() {
+    return '$title by $author, $pages pages';
+  }
+}
+
+Future<int> delayedValue(int value) {
+  return Future.delayed(
+    Duration(milliseconds: 100),
+    () => value,
+  );
+}
+
+Future<int> sumValues(int a, int b) async {
+  int x = await delayedValue(a);
+  int y = await delayedValue(b);
+  return x + y;
+}
+
+abstract class Vehicle {
+  double fuelConsumption();
+}
+
+class Car extends Vehicle {
+  double litersPer100Km;
+
+  Car(this.litersPer100Km);
+
+  @override
+  double fuelConsumption() {
+    return litersPer100Km;
+  }
+}
+
+class Motorcycle extends Vehicle {
+  double litersPer100Km;
+
+  Motorcycle(this.litersPer100Km);
+
+  @override
+  double fuelConsumption() {
+    return litersPer100Km;
+  }
+}
+
+double totalConsumption(List<Vehicle> vehicles, double distance) {
+  double total = 0;
+
+  for (Vehicle vehicle in vehicles) {
+    total += vehicle.fuelConsumption() * distance / 100;
+  }
+
+  return total;
+}
+
+class Product {
+  String name;
+  String category;
+  double price;
+
+  Product(this.name, this.category, this.price);
+}
+
+Map<String, double> totalByCategory(List<Product> products) {
+  Map<String, double> totals = {};
+
+  for (Product product in products) {
+    if (totals.containsKey(product.category)) {
+      totals[product.category] =
+          totals[product.category]! + product.price;
+    } else {
+      totals[product.category] = product.price;
+    }
+  }
+
+  return totals;
+}
+
+Future<int> getNumber(int value) async {
+  if (value <= 0) {
+    throw Exception('Invalid value');
+  }
+
+  await Future.delayed(Duration(milliseconds: 100));
+  return value;
+}
+
+Future<int> safeGetNumber(int value) async {
+  try {
+    return await getNumber(value);
+  } catch (e) {
+    return 0;
+  }
+}
+
+abstract class Payment {
+  double calculateFee(double amount);
+}
+
+class CardPayment extends Payment {
+  @override
+  double calculateFee(double amount) {
+    return amount * 0.02;
+  }
+}
+
+class CashPayment extends Payment {
+  @override
+  double calculateFee(double amount) {
+    return 0;
+  }
+}
+
+class CryptoPayment extends Payment {
+  @override
+  double calculateFee(double amount) {
+    return amount * 0.05;
+  }
+}
+
+double calculateTotal(Payment payment, double amount) {
+  return amount + payment.calculateFee(amount);
+}
+
+List<int> findPair(List<int> numbers, int target) {
+  for (int i = 0; i < numbers.length; i++) {
+    for (int j = i + 1; j < numbers.length; j++) {
+      if (numbers[i] + numbers[j] == target) {
+        return [i, j];
+      }
+    }
+  }
+
+  return [];
+}
+
+Future<String> runTask(String name, int milliseconds) async {
+  await Future.delayed(Duration(milliseconds: milliseconds));
+  return 'Task $name completed';
+}
+
+Future<List<String>> runTasks() async {
+  Future<String> a = runTask('A', 100);
+  Future<String> b = runTask('B', 50);
+  Future<String> c = runTask('C', 150);
+
+  return await Future.wait([a, b, c]);
+}
+
+Future<void> main() async {
+  shoppingListExample();
+
+  Book book = Book(
+  title: 'The World as Will and Representation',
+  author: 'Arthur Schopenhauer',
+  pages: 700,
+);
+
+  print(book.getInfo());
+
+  print(await delayedValue(10));
+  print(await sumValues(5, 7));
+
+  List<Vehicle> vehicles = [
+    Car(8),
+    Motorcycle(4),
+  ];
+  print(totalConsumption(vehicles, 200));
+
+  List<Product> products = [
+    Product('Apple', 'Food', 1000),
+    Product('Phone', 'Tech', 50000),
+    Product('Bread', 'Food', 300),
+  ];
+  print(totalByCategory(products));
+
+  print(await safeGetNumber(10));
+  print(await safeGetNumber(-5));
+
+  print(calculateTotal(CardPayment(), 1000));
+  print(calculateTotal(CashPayment(), 1000));
+  print(calculateTotal(CryptoPayment(), 1000));
+
+  print(findPair([2, 7, 11, 15], 9));
+  print(findPair([1, 2, 3], 10));
+
+  print(await runTasks());
+}
